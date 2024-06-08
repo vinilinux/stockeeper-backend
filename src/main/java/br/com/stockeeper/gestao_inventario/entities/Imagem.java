@@ -18,6 +18,13 @@ public class Imagem {
     @JoinColumn(name = "id_produto")
     private Produto produto;
 
+    public Imagem(String urlImagem) {
+        this.urlImagem = urlImagem;
+    }
+
+    public Imagem() {
+    }
+
     public String getUrlImagem() {
         return urlImagem;
     }

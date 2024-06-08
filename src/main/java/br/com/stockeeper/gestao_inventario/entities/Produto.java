@@ -10,7 +10,6 @@ import org.springframework.validation.annotation.Validated;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 @Entity
 @Table(name = "produto")
@@ -36,7 +35,7 @@ public class Produto {
     @Size(max = 50, min = 3, message = "{max.character}")
     private String material;
 
-    @Column(name = "preco_produto", precision = 10, scale = 2, nullable = false)
+    @Column(name = "preco_produto", nullable = false)
     @PositiveOrZero(message = "{positivoorzero}")
     @NotNull(message = "{preco.not.blank}")
     private Double preco;
@@ -53,7 +52,7 @@ public class Produto {
     @Size(max = 50, min = 3, message = "{max.character}")
     private String marca;
 
-    @Column(precision = 10, scale = 2)
+    @Column()
     @PositiveOrZero(message = "{positivoorzero}")
     private Double peso;
 
