@@ -21,6 +21,7 @@ import static org.mockito.Mockito.doThrow;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static br.com.stockeeper.gestao_inventario.enums.Categoria.CORRENTE;
@@ -169,4 +170,41 @@ class InventarioImplTest {
 
         assertTrue(exception.getMessage().contains("Falha ao listar produtos"));
     }
+
+    @Test
+    @DisplayName("Listar produto por nome")
+    void buscarPorNomeCase1() {
+        // Arranjo
+        Produto produto1 = new Produto("Produto1", 10, "Descrição1", 100.0, "Detalhe1", "Marca1", "Modelo1", 4.5, CORRENTE, null);
+
+        Optional<Produto> produto = Optional.of(produto1);
+
+        Mockito.when(inventarioRepository.findByName(produto1.getNome())).thenReturn(produto);
+
+        // Act
+        Optional<Produto> resultado = service.buscarPorNome(produto1.getNome());
+
+        // Assert
+        assertTrue(resultado.isPresent());
+        assertEquals(produto1.getNome(), resultado.get().getNome());
+    }
+
+    @Test
+    @DisplayName("Listar produto inexistente")
+    void buscarPorNomeCase2() {
+        // Arranjo
+        Produto produto1 = new Produto("Produto1", 10, "Descrição1", 100.0, "Detalhe1", "Marca1", "Modelo1", 4.5, CORRENTE, null);
+
+        Optional<Produto> produto = Optional.empty();
+
+        Mockito.when(inventarioRepository.findByName(produto1.getNome())).thenReturn(produto);
+
+        // Act
+        Optional<Produto> resultado = service.buscarPorNome(produto1.getNome());
+
+        // Assert
+        assertFalse(resultado.isPresent());
+    }
+
+
 }
