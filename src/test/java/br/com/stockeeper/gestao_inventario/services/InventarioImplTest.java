@@ -190,7 +190,7 @@ class InventarioImplTest {
     }
 
     @Test
-    @DisplayName("Listar produto inexistente")
+    @DisplayName("Listar produto inexistente por nome")
     void buscarPorNomeCase2() {
         // Arranjo
         Produto produto1 = new Produto("Produto1", 10, "Descrição1", 100.0, "Detalhe1", "Marca1", "Modelo1", 4.5, CORRENTE, null);
@@ -201,6 +201,39 @@ class InventarioImplTest {
 
         // Act
         Optional<Produto> resultado = service.buscarPorNome(produto1.getNome());
+
+        // Assert
+        assertFalse(resultado.isPresent());
+    }
+
+    @Test
+    @DisplayName("Listar produto por ID")
+    void buscarPorIdCase1() {
+        // Arranjo
+        Produto produto1 = new Produto("Produto1", 10, "Descrição1", 100.0, "Detalhe1", "Marca1", "Modelo1", 4.5, CORRENTE, null);
+
+        Optional<Produto> produto = Optional.of(produto1);
+
+        Mockito.when(inventarioRepository.findById(1)).thenReturn(produto);
+
+        // Act
+        Optional<Produto> resultado = service.buscarPorId(1);
+
+        // Assert
+        assertTrue(resultado.isPresent());
+        assertEquals(produto1.getNome(), resultado.get().getNome());
+    }
+
+    @Test
+    @DisplayName("Listar produto inexistente")
+    void buscarPorIDCase2() {
+        // Arranjo
+        Optional<Produto> produto = Optional.empty();
+
+        Mockito.when(inventarioRepository.findById(1)).thenReturn(produto);
+
+        // Act
+        Optional<Produto> resultado = service.buscarPorId(1);
 
         // Assert
         assertFalse(resultado.isPresent());
