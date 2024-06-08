@@ -11,14 +11,15 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import static org.mockito.Mockito.doThrow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,7 +71,6 @@ class InventarioImplTest {
         boolean produtoSalvo = service.salvar(produto);
 
         assertTrue(produtoSalvo);
-
     }
 
     @Test
@@ -137,6 +137,36 @@ class InventarioImplTest {
 
         assertTrue(errorMessage.contains("Quantidade não pode estar em branco ou nulo."));
 
+    }
 
+    @Test
+    @DisplayName("Listar todos os Produtos")
+    void listarCase1() {
+        // Arranjo
+        Produto produto1 = new Produto("Produto1", 10, "Descrição1", 100.0, "Detalhe1", "Marca1", "Modelo1", 4.5, CORRENTE, null);
+        Produto produto2 = new Produto("Produto2", 20, "Descrição2", 200.0, "Detalhe2", "Marca2", "Modelo2", 4.8, CORRENTE, null);
+        List<Produto> produtos = Arrays.asList(produto1, produto2);
+
+        Mockito.when(inventarioRepository.findAll()).thenReturn(produtos);
+
+        // Act
+        List<Produto> resultado = service.listar();
+
+        // Assert
+        assertEquals(produtos, resultado);
+    }
+
+    @Test
+    @DisplayName("Listar produtos com exceção")
+    void listarCase2() {
+        // Arranjo
+        doThrow(new RuntimeException("Erro ao acessar o repositório")).when(inventarioRepository).findAll();
+
+        // Act & Assert
+        InventarioException exception = assertThrows(InventarioException.class, () -> {
+            service.listar();
+        });
+
+        assertTrue(exception.getMessage().contains("Falha ao listar produtos"));
     }
 }
