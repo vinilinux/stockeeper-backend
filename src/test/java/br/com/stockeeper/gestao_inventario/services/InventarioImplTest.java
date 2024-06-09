@@ -239,5 +239,38 @@ class InventarioImplTest {
         assertFalse(resultado.isPresent());
     }
 
+    @Test
+    @DisplayName("Listar todos os Produtos por marca")
+    void listarPorMarcaCase1() {
+        // Arranjo
+        Produto produto1 = new Produto("Produto1", 10, "Descrição1", 100.0, "Detalhe1", "Marca1", "Modelo1", 4.5, CORRENTE, null);
+        Produto produto2 = new Produto("Produto2", 20, "Descrição2", 200.0, "Detalhe2", "Marca1", "Modelo2", 4.8, CORRENTE, null);
+        List<Produto> produtos = Arrays.asList(produto1, produto2);
+
+        Mockito.when(inventarioRepository.findByMarca("marca1")).thenReturn(produtos);
+
+        // Act
+        List<Produto> resultado = service.listarPorMarca("marca1");
+
+        // Assert
+        assertEquals(produtos, resultado);
+    }
+
+    @Test
+    @DisplayName("Listar produtos por marca com exceção")
+    void listarPorMarcaCase2() {
+        // Arranjo
+        String marca = "MarcaInexistente";
+
+        doThrow(new RuntimeException("Erro ao acessar o repositório")).when(inventarioRepository).findByMarca(marca);
+
+        // Act & Assert
+        InventarioException exception = assertThrows(InventarioException.class, () -> {
+            service.listarPorMarca(marca);
+        });
+
+        assertEquals("Falha ao buscar o produto", exception.getMessage());
+    }
+
 
 }
